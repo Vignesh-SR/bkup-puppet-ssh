@@ -42,7 +42,24 @@
 #
 # Copyright 2017 Your name here, unless otherwise noted.
 #
-class ssh {
+class ssh(
+ String       $package_name,
+ String       $service_name,
+ String       $ensure,
+ String       $service_ensure,
+ Boolean      $service_enable,
+ Boolean $permit_root_login = true,
+ Integer $port              = 22,
+) { 
+  notify { "test top scope var in a module":
+    message => "test top scope ${::test_top_scope}"
+  }
+  class  { '::ssh::service': } 
+  class  { '::ssh::config': }
+  class  { '::ssh::install': }
 
-
+  Class['::ssh::install'] 
+  -> Class['::ssh::config']
+  ~> Class['::ssh::service']
+  -> Class['ssh']
 }
